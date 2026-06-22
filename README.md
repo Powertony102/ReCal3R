@@ -29,8 +29,51 @@
 </p>
 </div>
 
+## Getting Started
+
+### Installation
+
+1. Clone ReCal3R.
+```bash
+git clone https://github.com/Powertony102/ReCal3R.git
+cd ReCal3R
+```
+
+2. Create the environment.
+```bash
+conda create -n recal3r python=3.11 cmake=3.14.0
+conda activate recal3r
+conda install pytorch torchvision pytorch-cuda=12.1 -c pytorch -c nvidia  # use the correct version of cuda for your system
+pip install -r requirements.txt
+# issues with pytorch dataloader, see https://github.com/pytorch/pytorch/issues/99625
+conda install 'llvm-openmp<16'
+# for evaluation
+pip install evo
+pip install open3d
+```
+
+3. Compile the cuda kernels for RoPE (as in CroCo v2).
+```bash
+cd src/croco/models/curope/
+python setup.py build_ext --inplace
+cd ../../../../
+```
+
+### Download Checkpoints
+
+CUT3R provide checkpoints trained on 4-64 views: [`cut3r_512_dpt_4_64.pth`](https://drive.google.com/file/d/1Asz-ZB3FfpzZYwunhQvNPZEUA8XUNAYD/view?usp=drive_link).
+
+To download the weights, run the following commands:
+```bash
+cd src
+gdown --fuzzy https://drive.google.com/file/d/1Asz-ZB3FfpzZYwunhQvNPZEUA8XUNAYD/view?usp=drive_link
+cd ..
+```
+
+
+
 ## 🍺 Acknowledgements
 
-- Thanks to these great repositories: [VGGT](https://github.com/facebookresearch/vggt), [Dust3r](https://github.com/naver/dust3r),  [Fast3R](https://github.com/facebookresearch/fast3r), [CUT3R](https://github.com/CUT3R/CUT3R), [MV-DUSt3R+](https://github.com/facebookresearch/mvdust3r), [StreamVGGT](https://github.com/wzzheng/StreamVGGT), [VGGT-Long](https://github.com/DengKaiCQ/VGGT-Long),  [FastVGGT](https://github.com/mystorm16/FastVGGT) and many other inspiring works in the community.
+- Thanks to these great repositories:[CUT3R](https://github.com/CUT3R/CUT3R), [TTT3R](https://github.com/Inception3D/TTT3R), [TTSA3R](https://github.com/anonus2357/ttsa3r), [MeMix](https://github.com/dongjiacheng06/MeMix), [Easi3R](https://github.com/Inception3D/Easi3R), [DUSt3R](https://github.com/naver/dust3r), [MonST3R](https://github.com/Junyi42/monst3r), [Spann3R](https://github.com/HengyiWang/spann3r), [Viser](https://github.com/nerfstudio-project/viser) and many other inspiring works in the community.
 
 - Special thanks to our supervisor [Dr. Wentao Cheng](https://wtchengcv.github.io/) for consistent suggestions and efforts to this work.
