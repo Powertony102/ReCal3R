@@ -5,27 +5,35 @@
   <a href="https://github.com/Powertony102/S-VGGT"><img src="https://img.shields.io/badge/Project_Page-SVGGT-yellow" alt="Project Page"></a>
 </p>
 <p align="center">
-  <a href="https://xinzelicv.github.io/">Xinze Li</a><sup>1</sup>, Yiyuan Wang<sup>1,3</sup>, Pengxu Chen<sup>1,2</sup>,
-  Weifeng Su<sup>1,4</sup>, <a href="https://wtchengcv.github.io/">Wentao Cheng</a><sup>1†</sup>
+  <a href="https://xinzelicv.github.io/">Xinze Li</a><sup>1</sup>,
+  Yiyuwan Wang<sup>2,1</sup>,
+  Pengxu Chen<sup>3</sup>,
+  <a href="https://wtchengcv.github.io/">Wentao Cheng</a><sup>1,*</sup>,
+  Weifeng Su<sup>1,4</sup>,
+  Wentao Fan<sup>1,4</sup>,
+  Weisi Lin<sup>5</sup>
 </p>
 <p align="center">
-  <sup>1</sup>Beijing Normal University–Hong Kong Baptist University &nbsp;&nbsp;
-  <sup>2</sup>Jilin University &nbsp;&nbsp;
-  <sup>3</sup>Hong Kong Baptist University &nbsp;&nbsp;
-  <sup>4</sup>Guangdong Provincial Key Laboratory of Interdisciplinary Research and Application for Data Science
+  <sup>1</sup>Beijing Normal-Hong Kong Baptist University &nbsp;&nbsp;
+  <sup>2</sup>Hong Kong Baptist University &nbsp;&nbsp;
+  <sup>3</sup>Jilin University &nbsp;&nbsp;
+  <sup>4</sup>Guangdong Provincial Key Laboratory of Interdisciplinary Research and Application for Data Science &nbsp;&nbsp;
+  <sup>5</sup>Nanyang Technological University
 </p>
 <p align="center">
-  <sup>†</sup>Corresponding Author
+  <sup>*</sup>Corresponding Author
 </p>
 
 <p align="center">
   Contact: t330026083@mail.bnbu.edu.cn
 </p>
 <p align="center">
-  <a href="https://bnbu.edu.cn/"><img height="100" src="assets/logo_bnbu.svg"> </a>
+  <a href="https://bnbu.edu.cn/"><img height="80" src="assets/logo_bnbu.svg"> </a>
+  <a href="https://www.hkbu.edu.hk/en.html"><img height="80" src="assets/logo_hkbu.svg"> </a>
   <a href="https://www.jlu.edu.cn/"><img height="80" src="assets/logo_jlu.webp"> </a>
-  <a href="https://www.hkbu.edu.hk/en.html"><img height="100" src="assets/logo_hkbu.svg"> </a>
-  <a href="https://irads.bnbu.edu.cn/"><img height="100" src="assets/logo_irads.png"> </a>
+</p>
+<p align="center">
+  <a href="https://www.ntu.edu.sg/"><img height="80" src="assets/ntu_logo.webp"> </a>
 </p>
 </div>
 
