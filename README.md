@@ -71,6 +71,10 @@ gdown --fuzzy https://drive.google.com/file/d/1Asz-ZB3FfpzZYwunhQvNPZEUA8XUNAYD/
 cd ..
 ```
 
+### Evaluation
+
+Please refer to the [eval.md](eval/eval.md) for more details.
+
 
 
 ## 🍺 Acknowledgements
