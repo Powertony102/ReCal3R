@@ -28,12 +28,12 @@
   Contact: t330026083@mail.bnbu.edu.cn
 </p>
 <p align="center">
-  <a href="https://bnbu.edu.cn/"><img height="80" src="assets/logo_bnbu.svg"> </a>
-  <a href="https://www.hkbu.edu.hk/en.html"><img height="80" src="assets/logo_hkbu.svg"> </a>
-  <a href="https://www.jlu.edu.cn/"><img height="80" src="assets/logo_jlu.webp"> </a>
+  <a href="https://bnbu.edu.cn/"><img height="55" src="assets/logo_bnbu.svg"> </a>
+  <a href="https://www.hkbu.edu.hk/en.html"><img height="55" src="assets/logo_hkbu.svg"> </a>
 </p>
 <p align="center">
-  <a href="https://www.ntu.edu.sg/"><img height="80" src="assets/ntu_logo.webp"> </a>
+  <a href="https://www.jlu.edu.cn/"><img height="80" src="assets/logo_jlu.webp"> </a>
+  <a href="https://www.ntu.edu.sg/"><img height="65" src="assets/ntu_logo.webp"> </a>
 </p>
 </div>
 
