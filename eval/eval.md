@@ -1,7 +1,7 @@
 # Evaluation
 
 ## Datasets
-Please follow [MonST3R](https://github.com/Junyi42/monst3r/blob/main/data/evaluation_script.md) and [Spann3R](https://github.com/HengyiWang/spann3r/blob/main/docs/data_preprocess.md) to download **ScanNet**, **TUM-dynamics**, **Sintel**, **Bonn**, **KITTI**, **7Scenes**, and **NRGBD** datasets.
+Please follow [MonST3R](https://github.com/Junyi42/monst3r/blob/main/data/evaluation_script.md) and [Spann3R](https://github.com/HengyiWang/spann3r/blob/main/docs/data_preprocess.md) to download the datasets used by the current evaluation scripts: **ScanNet**, **TUM-dynamics**, **Bonn**, **7Scenes**, and **NRGBD**.
 
 ### ScanNet
 To prepare the **ScanNet** dataset, execute:
@@ -27,12 +27,6 @@ The relpose and mv_recon evaluators can also read the original Bonn layout direc
 `ROOT/rgbd_bonn_*/rgb`, `ROOT/rgbd_bonn_*/depth`, `rgb.txt`, `depth.txt`, and
 `groundtruth.txt`.
 
-### KITTI
-To prepare the **KITTI** dataset, execute:
-```bash
-python datasets_preprocess/long_prepare_kitti.py # You may need to change the path of the dataset
-```
-
 ### 7Scenes and NRGBD
 
 The 3D reconstruction evaluator follows the 7Scenes/NRGBD layout used by [S-VGGT](https://github.com/Powertony102/S-VGGT):
@@ -49,10 +43,8 @@ Results will be saved in `eval_results/*`.
 ### Camera Pose Estimation
 
 ```bash
-CUDA_VISIBLE_DEVICES=6,7 bash eval/relpose/run_scannet.sh # You may need to change [--num_processes] to the number of your gpus and choose sequence length in datasets=('scannet_s3_1000')
+CUDA_VISIBLE_DEVICES=6,7 bash eval/relpose/run_scannet.sh # You may need to change [--num_processes] to the number of your gpus
 CUDA_VISIBLE_DEVICES=6,7 bash eval/relpose/run_tum.sh # Uses original TUM-RGBD layout by default; set EVAL_TUM_DATASET=tum_s1_1000 for prepared data
-CUDA_VISIBLE_DEVICES=6,7 bash eval/relpose/run_sintel.sh # You may need to change [--num_processes] to the number of your gpus
-CUDA_VISIBLE_DEVICES=6,7 bash eval/relpose/run_7andN.sh # Uses EVAL_7SCENES_ROOT and EVAL_NRGBD_ROOT when set
 ```
 
 For TUM-dynamics pose evaluation on the original dataset layout, pass the dataset
@@ -61,31 +53,18 @@ root that contains the `rgbd_dataset_*` sequence folders:
 ```bash
 python eval/relpose/launch.py \
   --weights src/cut3r_512_dpt_4_64.pth \
-  --output_dir eval_results/relpose/tum/ttt3r \
+  --output_dir eval_results/relpose/tum/recal3r \
   --eval_dataset tum \
   --dataset_path path/to/tum \
   --pose_eval_stride 1 \
   --max_frames 1000 \
   --size 512 \
-  --model_update_type ttt3r
+  --model_update_type recal3r
 ```
 
 Use `--seq_list rgbd_dataset_freiburg3_walking_xyz` to evaluate only selected
 TUM sequences. The helper script also accepts `EVAL_TUM_ROOT`, `EVAL_TUM_SEQ_LIST`,
 `EVAL_TUM_MAX_FRAMES`, and `EVAL_TUM_STRIDE`.
-
-For direct 7Scenes/NRGBD pose evaluation, pass the dataset root with `--dataset_path`:
-
-```bash
-python eval/relpose/launch.py \
-  --weights src/cut3r_512_dpt_4_64.pth \
-  --output_dir eval_results/relpose/7scenes/ttt3r \
-  --eval_dataset 7scenes \
-  --dataset_path path/to/7-scenes \
-  --pose_eval_stride 3 \
-  --size 512 \
-  --model_update_type ttt3r
-```
 
 For Bonn pose evaluation on the original dataset layout, pass the dataset root that
 contains the `rgbd_bonn_*` sequence folders:
@@ -93,25 +72,46 @@ contains the `rgbd_bonn_*` sequence folders:
 ```bash
 python eval/relpose/launch.py \
   --weights src/cut3r_512_dpt_4_64.pth \
-  --output_dir eval_results/relpose/bonn/ttt3r \
+  --output_dir eval_results/relpose/bonn/recal3r \
   --eval_dataset bonn \
   --dataset_path path/to/rgbd_bonn_dataset \
   --pose_eval_stride 1 \
   --max_frames 500 \
   --size 512 \
-  --model_update_type ttt3r
+  --model_update_type recal3r
 ```
 
 Use `--seq_list balloon2 crowd2` to evaluate only selected Bonn sequences. Sequence
 names may omit the `rgbd_bonn_` prefix.
 
+### 3D Reconstruction
+
+```bash
+CUDA_VISIBLE_DEVICES=5 bash eval/mv_recon/run.sh # Evaluates 7Scenes and NRGBD; set EVAL_7SCENES_ROOT and EVAL_NRGBD_ROOT when needed
+```
+
+The 3D reconstruction evaluator follows the 7Scenes/NRGBD layout used by
+[S-VGGT](https://github.com/Powertony102/S-VGGT). For direct evaluation, pass
+the dataset root with `--dataset_root`, or use `--seven_scenes_root` and
+`--nrgbd_root`:
+
+```bash
+python eval/mv_recon/launch.py \
+  --weights src/cut3r_512_dpt_4_64.pth \
+  --model_name recal3r \
+  --output_dir eval_results/video_recon/7scenes_200/recal3r \
+  --eval_dataset 7scenes \
+  --dataset_root path/to/7-scenes \
+  --max_frames 200 \
+  --size 512 \
+  --model_update_type recal3r
+```
+
 ### Video Depth
 
 ```bash
-CUDA_VISIBLE_DEVICES=5 bash eval/video_depth/run_kitti.sh # You may need to change [--num_processes] to the number of your gpus and choose sequence length in datasets=('kitti_s1_500')
-CUDA_VISIBLE_DEVICES=5 bash eval/video_depth/run_bonn.sh # You may need to change [--num_processes] to the number of your gpus and choose sequence length in datasets=('bonn_s1_500')
-CUDA_VISIBLE_DEVICES=5 bash eval/video_depth/run_tum.sh # Uses original TUM-RGBD layout by default
-CUDA_VISIBLE_DEVICES=5 bash eval/video_depth/run_sintel.sh # You may need to change [--num_processes] to the number of your gpus
+CUDA_VISIBLE_DEVICES=5 bash eval/video_depth/run_bonn.sh # You may need to change [--num_processes] to the number of your gpus
+CUDA_VISIBLE_DEVICES=5 bash eval/video_depth/run_tum.sh # Uses original TUM-RGBD layout by default; set EVAL_TUM_DATASET=tum_s1_1000 for prepared data
 ```
 
 For TUM-dynamics depth evaluation on the original dataset layout:
@@ -119,16 +119,16 @@ For TUM-dynamics depth evaluation on the original dataset layout:
 ```bash
 python eval/video_depth/launch.py \
   --weights src/cut3r_512_dpt_4_64.pth \
-  --output_dir eval_results/video_depth/tum/ttt3r \
+  --output_dir eval_results/video_depth/tum/recal3r \
   --eval_dataset tum \
   --dataset_path path/to/tum \
   --pose_eval_stride 1 \
   --max_frames 1000 \
   --size 512 \
-  --model_update_type ttt3r
+  --model_update_type recal3r
 
 python eval/video_depth/eval_depth.py \
-  --output_dir eval_results/video_depth/tum/ttt3r \
+  --output_dir eval_results/video_depth/tum/recal3r \
   --eval_dataset tum \
   --dataset_path path/to/tum \
   --pose_eval_stride 1 \
@@ -145,16 +145,16 @@ For Bonn depth evaluation on the original dataset layout:
 ```bash
 python eval/video_depth/launch.py \
   --weights src/cut3r_512_dpt_4_64.pth \
-  --output_dir eval_results/video_depth/bonn/ttt3r \
+  --output_dir eval_results/video_depth/bonn/recal3r \
   --eval_dataset bonn \
   --dataset_path path/to/rgbd_bonn_dataset \
   --pose_eval_stride 1 \
   --max_frames 1000 \
   --size 512 \
-  --model_update_type ttt3r
+  --model_update_type recal3r
 
 python eval/video_depth/eval_depth.py \
-  --output_dir eval_results/video_depth/bonn/ttt3r \
+  --output_dir eval_results/video_depth/bonn/recal3r \
   --eval_dataset bonn \
   --dataset_path path/to/rgbd_bonn_dataset \
   --pose_eval_stride 1 \
@@ -163,4 +163,3 @@ python eval/video_depth/eval_depth.py \
 ```
 
 Use `--seq_list balloon crowd2` on both commands to evaluate selected Bonn sequences.
-

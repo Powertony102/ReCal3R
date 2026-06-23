@@ -3,7 +3,7 @@
 set -e
 
 workdir='.'
-model_names=('ttt3r') # ttt3r cut3r
+model_names=('recal3r') # recal3r ttt3r cut3r
 ckpt_name='cut3r_512_dpt_4_64'
 model_weights="${workdir}/src/${ckpt_name}.pth"
 dataset='bonn'

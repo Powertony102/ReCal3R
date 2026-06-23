@@ -69,6 +69,6 @@ cd ..
 
 ## 🍺 Acknowledgements
 
-- Thanks to these great repositories:[CUT3R](https://github.com/CUT3R/CUT3R), [TTT3R](https://github.com/Inception3D/TTT3R), [TTSA3R](https://github.com/anonus2357/ttsa3r), [MeMix](https://github.com/dongjiacheng06/MeMix), [Easi3R](https://github.com/Inception3D/Easi3R), [DUSt3R](https://github.com/naver/dust3r), [MonST3R](https://github.com/Junyi42/monst3r), [Spann3R](https://github.com/HengyiWang/spann3r), [Viser](https://github.com/nerfstudio-project/viser) and many other inspiring works in the community.
+- Thanks to these great repositories:[CUT3R](https://github.com/CUT3R/CUT3R), [TTT3R](https://github.com/Inception3D/TTT3R), [TTSA3R](https://github.com/anonus2357/ttsa3r), [MeMix](https://github.com/dongjiacheng06/MeMix), [Easi3R](https://github.com/Inception3D/Easi3R), [DUSt3R](https://github.com/naver/dust3r), [MonST3R](https://github.com/Junyi42/monst3r), [Spann3R](https://github.com/HengyiWang/spann3r), [Viser](https://github.com/nerfstudio-project/viser), [S-VGGT](https://github.com/Powertony102/S-VGGT) and many other inspiring works in the community.
 
 - Special thanks to our supervisor [Dr. Wentao Cheng](https://wtchengcv.github.io/) for consistent suggestions and efforts to this work.
