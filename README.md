@@ -6,12 +6,12 @@
 </p>
 <p align="center">
   <a href="https://xinzelicv.github.io/">Xinze Li</a><sup>1</sup>,
-  Yiyuwan Wang<sup>2,1</sup>,
+  Yiyuan Wang<sup>2,1</sup>,
   Pengxu Chen<sup>3</sup>,
-  <a href="https://wtchengcv.github.io/">Wentao Cheng</a><sup>1,*</sup>,
-  Weifeng Su<sup>1,4</sup>,
   Wentao Fan<sup>1,4</sup>,
-  Weisi Lin<sup>5</sup>
+  Weifeng Su<sup>1,4</sup>,
+  Weisi Lin<sup>5</sup>,
+  <a href="https://wtchengcv.github.io/">Wentao Cheng</a><sup>1,*</sup>
 </p>
 <p align="center">
   <sup>1</sup>Beijing Normal-Hong Kong Baptist University &nbsp;&nbsp;
@@ -28,7 +28,7 @@
   Contact: t330026083@mail.bnbu.edu.cn
 </p>
 <p align="center">
-  <a href="https://bnbu.edu.cn/" style="margin: 0 25px;"><img height="50" src="assets/logo_bnbu.svg"></a>
+  <a href="https://bnbu.edu.cn/" style="margin: 0 50px 0 25px;"><img height="60" src="assets/logo_bnbu.svg"></a>
   <a href="https://www.hkbu.edu.hk/en.html" style="margin: 0 25px;"><img height="50" src="assets/logo_hkbu.svg"></a>
   <a href="https://www.jlu.edu.cn/" style="margin: 0 25px;"><img height="50" src="assets/logo_jlu.webp"></a>
   <a href="https://www.ntu.edu.sg/" style="margin: 0 25px;"><img height="50" src="assets/ntu_logo.webp"></a>
