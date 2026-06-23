@@ -16,8 +16,12 @@
 <p align="center">
   <sup>1</sup>Beijing Normal-Hong Kong Baptist University &nbsp;&nbsp;
   <sup>2</sup>Hong Kong Baptist University &nbsp;&nbsp;
-  <sup>3</sup>Jilin University &nbsp;&nbsp;
-  <sup>4</sup>Guangdong Provincial Key Laboratory of Interdisciplinary Research and Application for Data Science &nbsp;&nbsp;
+  <sup>3</sup>Jilin University
+</p>
+<p align="center">
+  <sup>4</sup>Guangdong Provincial Key Laboratory of Interdisciplinary Research and Application for Data Science
+</p>
+<p align="center">
   <sup>5</sup>Nanyang Technological University
 </p>
 <p align="center">
@@ -28,7 +32,7 @@
   Contact: t330026083@mail.bnbu.edu.cn
 </p>
 <p align="center">
-  <a href="https://bnbu.edu.cn/" style="margin: 0 50px 0 25px;"><img height="60" src="assets/logo_bnbu.svg"></a>
+  <a href="https://bnbu.edu.cn/" style="margin: 0 20px 0 25px;"><img height="55" src="assets/logo_bnbu.svg"></a>
   <a href="https://www.hkbu.edu.hk/en.html" style="margin: 0 25px;"><img height="50" src="assets/logo_hkbu.svg"></a>
   <a href="https://www.jlu.edu.cn/" style="margin: 0 25px;"><img height="50" src="assets/logo_jlu.webp"></a>
   <a href="https://www.ntu.edu.sg/" style="margin: 0 25px;"><img height="50" src="assets/ntu_logo.webp"></a>
