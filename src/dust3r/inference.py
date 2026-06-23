@@ -290,8 +290,8 @@ def inference_recurrent(groups, model, device, verbose=True):
 @torch.no_grad()
 def inference_recurrent_lighter(groups, model, device, verbose=True):
     if getattr(model.config, "model_update_type", None) == "recal3r":
-        model.beta_safe = getattr(
-            model, "beta_safe", getattr(model.config, "beta_safe", 0.1)
+        model.beta_base = getattr(
+            model, "beta_base", getattr(model.config, "beta_base", 0.1)
         )
         model.entropy_head_reduce = getattr(
             model,

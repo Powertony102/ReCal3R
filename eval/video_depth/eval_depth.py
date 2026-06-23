@@ -86,7 +86,7 @@ def get_args_parser():
         help=argparse.SUPPRESS,
     )
     parser.add_argument(
-        "--beta_safe",
+        "--beta_base",
         type=float,
         default=0.0,
         help=argparse.SUPPRESS,

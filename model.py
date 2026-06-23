@@ -1,6 +1,6 @@
 import sys
 import os
-import math # 确保文件头部导入�?math
+import math
 
 sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 from collections import OrderedDict
@@ -370,9 +370,9 @@ class ARCroco3DStereo(CroCoNet):
         if self.pose_head_flag and attn_logits.shape[-1] > 1:
             attn_logits = attn_logits[..., 1:]
 
-        # Spatial gate (where to update)
+        # Alignment gate (where to update)
         state_query_img_key = attn_logits.mean(dim=(0, 2, 4))  # [B, N_state]
-        spatial_gate = torch.sigmoid(state_query_img_key).unsqueeze(-1)  # [B, N_state, 1]
+        alignment_gate = torch.sigmoid(state_query_img_key).unsqueeze(-1)  # [B, N_state, 1]
 
         # Attention distribution statistics (how reliable the observation is)
         attn_weights = torch.softmax(attn_logits, dim=-1)
@@ -382,28 +382,28 @@ class ARCroco3DStereo(CroCoNet):
         entropy = -torch.sum(
             avg_attn_weights * torch.log(avg_attn_weights + 1e-12), dim=-1
         )  # [B, N_state]
-        u_m = (entropy / math.log(n_obs)).unsqueeze(-1)  # [B, N_state, 1]
+        R = (entropy / math.log(n_obs)).unsqueeze(-1)  # [B, N_state, 1]
 
         rho_mean, _ = torch.max(avg_attn_weights, dim=-1)  # [B, N_state]
         rho_mean = rho_mean.unsqueeze(-1)
 
-        lambda_obs = (1.0 - u_m) * rho_mean
+        lambda_obs = (1.0 - R) * rho_mean
 
         # Prior precision with temporal decay
         gamma = float(getattr(self.config, "heat_decay", 0.95))
-        if not hasattr(self, "token_heat") or self.token_heat.shape != lambda_obs.shape:
-            self.token_heat = torch.zeros_like(lambda_obs)
+        if not hasattr(self, "update_pressure") or self.update_pressure.shape != lambda_obs.shape:
+            self.update_pressure = torch.zeros_like(lambda_obs)
         else:
-            self.token_heat = self.token_heat * gamma
+            self.update_pressure = self.update_pressure * gamma
 
-        lambda_prior = self.token_heat
+        lambda_prior = self.update_pressure
         kt = lambda_obs / (lambda_prior + lambda_obs + 1e-6)
 
         with torch.no_grad():
-            effective_observation = lambda_obs * spatial_gate
-            self.token_heat = self.token_heat + effective_observation.detach() * update_mask.float()
+            effective_observation = lambda_obs * alignment_gate
+            self.update_pressure = self.update_pressure + effective_observation.detach() * update_mask.float()
 
-        return update_mask * spatial_gate * kt
+        return update_mask * alignment_gate * kt
 
     def _set_patch_embed(self, img_size=224, patch_size=16, enc_embed_dim=768):
         self.patch_embed = get_patch_embed(
@@ -1001,32 +1001,22 @@ class ARCroco3DStereo(CroCoNet):
                 if self.config.model_update_type == "cut3r":
                     update_mask1 = update_mask
                 elif self.config.model_update_type == "ttt3r":
-                    # --- 保持原版逻辑不动 ---
                     cross_attn_state_re = rearrange(torch.cat(cross_attn_state, dim=0), 'l h nstate nimg -> 1 nstate nimg (l h)')
                     state_query_img_key = cross_attn_state_re.mean(dim=(-1, -2))
                     update_mask1 = update_mask * torch.sigmoid(state_query_img_key)[..., None] * 1.0
                 elif self.config.model_update_type == "recal3r":
-                    # --- [1] 空间门控 (完全保留原版 ttt3r 逻辑) ---
                     cross_attn_state_re = rearrange(torch.cat(cross_attn_state, dim=0), 'l h nstate nimg -> 1 nstate nimg (l h)')
                     state_query_img_key = cross_attn_state_re.mean(dim=(-1, -2))
-                    spatial_gate = torch.sigmoid(state_query_img_key)[..., None] # [1, nstate, 1]
+                    alignment_gate = torch.sigmoid(state_query_img_key)[..., None] # [1, nstate, 1]
 
-                    # --- [NEW] 自省热力图逻辑 (Introspective Heat Map) ---
-                    # 如果是第一次运行，初始化热力图容器
-                    if not hasattr(self, 'token_heat'):
-                        # init token heat buffer with shape aligned to spatial_gate
-                        self.token_heat = torch.zeros_like(spatial_gate)
+                    if not hasattr(self, 'update_pressure'):
+                        self.update_pressure = torch.zeros_like(alignment_gate)
 
                     with torch.no_grad():
-                        # 1. 更新 Token 功劳�?( EMA 累积 )
-                        # 使用 .detach() 极其关键，这是防止显存爆炸的“救命稻草�?                        # 0.95 的遗忘率意味着模型会记住最近约 20 帧的重点区域
-                        self.token_heat = 0.95 * self.token_heat + 0.05 * spatial_gate.detach()
+                        self.update_pressure = 0.95 * self.update_pressure + 0.05 * alignment_gate.detach()
                         
-                        # 2. 计算锚点保护因子 (Anchor Protection)
-                        # 热度越高，更新权重越低。torch.exp(-x) 将高热度映射为低更新�?                        # 这样即便当前帧有 Surprise，历史锚�?token 也会保持稳定
-                        anchor_protection = torch.exp(-self.token_heat) 
+                        attenuation = torch.exp(-self.update_pressure) 
 
-                    # --- [2] 时间惊喜�?(完全保留你的逻辑) ---
                     with torch.no_grad():
                         f_img_input_proj = self.decoder_embed(dec[0])
                         f_img_output = dec[-1][:, 1:] 
@@ -1037,12 +1027,9 @@ class ARCroco3DStereo(CroCoNet):
                         f_input_norm = torch.norm(f_img_input_proj, p=2, dim=-1).mean().item() + 1e-6
                         relative_err = raw_recon_err / f_input_norm
                         
-                        frame_surprise = torch.sigmoid(torch.tensor((relative_err - 0.2))).item()
+                        residual_score = torch.sigmoid(torch.tensor((relative_err - 0.2))).item()
 
-                    # --- [3] 最终更新掩�?( 整合空间、时间、自省三维度 ) ---
-                    # 逻辑：update_mask * (当前重要�?* 历史锚点保护) * 整帧惊喜�?                    update_mask1 = update_mask * (spatial_gate * anchor_protection) * frame_surprise
                     
-                    # 打印 Debug 信息，监控热度分�?                    # if i % 5 == 0: # 没必要每帧都打，�?帧监控一�?                    #     print(f"DEBUG: raw_err={raw_recon_err:.2f}, surprise={frame_surprise:.4f}, avg_heat={self.token_heat.mean().item():.4f}")
                 else:
                     raise ValueError(f"Invalid model type: {self.config.model_update_type}")
 

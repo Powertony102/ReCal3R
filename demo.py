@@ -43,9 +43,9 @@ random.seed(42)
 framerate = 30
 
 
-def resolve_beta_safe_default(model_update_type, beta_safe):
-    if beta_safe is not None:
-        return float(beta_safe)
+def resolve_beta_base_default(model_update_type, beta_base):
+    if beta_base is not None:
+        return float(beta_base)
     return 0.1 if (model_update_type or "").strip() == "recal3r" else 0.0
 
 def parse_args():
@@ -103,7 +103,7 @@ def parse_args():
         help="model update type",
     )
     parser.add_argument(
-        "--beta_safe",
+        "--beta_base",
         type=float,
         default=None,
         help="safe fallback beta value; default is 0.1 for recal3r and 0.0 otherwise",
@@ -476,9 +476,9 @@ def run_inference(args):
     print(f"Loading model from {args.model_path}...")
     model = ARCroco3DStereo.from_pretrained(args.model_path).to(device)
     model.config.model_update_type = args.model_update_type
-    beta_safe = resolve_beta_safe_default(args.model_update_type, args.beta_safe)
-    model.beta_safe = beta_safe
-    model.config.beta_safe = beta_safe
+    beta_base = resolve_beta_base_default(args.model_update_type, args.beta_base)
+    model.beta_base = beta_base
+    model.config.beta_base = beta_base
 
     model.eval()
 

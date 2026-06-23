@@ -115,11 +115,11 @@ def canonicalize_model_update_type(model_update_type):
     return model_update_type
 
 
-def default_token_heat_decay():
+def default_update_pressure_decay():
     return 0.95
 
 
-def default_beta_safe(model_update_type):
+def default_beta_base(model_update_type):
     model_update_type = canonicalize_model_update_type(model_update_type)
     return 0.1 if model_update_type == "recal3r" else 0.0
 
@@ -148,7 +148,7 @@ class ARCroco3DStereoConfig(PretrainedConfig):
         pose_head=False,
         model_update_type="cut3r",
         entropy_eps=1e-12,
-        beta_safe=None,
+        beta_base=None,
         entropy_head_reduce="mean",
         uncertainty_clamp_max=1.0,
         decay=None,
@@ -174,14 +174,14 @@ class ARCroco3DStereoConfig(PretrainedConfig):
         self.pose_head = pose_head
         self.model_update_type = canonicalize_model_update_type(model_update_type)
         self.entropy_eps = entropy_eps
-        self.beta_safe = (
-            default_beta_safe(self.model_update_type)
-            if beta_safe is None
-            else beta_safe
+        self.beta_base = (
+            default_beta_base(self.model_update_type)
+            if beta_base is None
+            else beta_base
         )
         self.entropy_head_reduce = entropy_head_reduce
         self.uncertainty_clamp_max = uncertainty_clamp_max
-        self.decay = default_token_heat_decay() if decay is None else decay
+        self.decay = default_update_pressure_decay() if decay is None else decay
         self.croco_kwargs = croco_kwargs
 
 
@@ -797,7 +797,7 @@ class ARCroco3DStereo(CroCoNet):
     def _uses_recal3r(self):
         return getattr(self.config, "model_update_type", None) == "recal3r"
 
-    def _uses_token_heat_update(self):
+    def _uses_update_pressure_update(self):
         return self._uses_recal3r()
 
     def _entropy_eps(self):
@@ -805,13 +805,13 @@ class ARCroco3DStereo(CroCoNet):
             getattr(self, "entropy_eps", getattr(self.config, "entropy_eps", 1e-12))
         )
 
-    def _beta_safe(self):
-        beta_safe = getattr(self, "beta_safe", getattr(self.config, "beta_safe", None))
-        if beta_safe is None:
-            beta_safe = default_beta_safe(
+    def _beta_base(self):
+        beta_base = getattr(self, "beta_base", getattr(self.config, "beta_base", None))
+        if beta_base is None:
+            beta_base = default_beta_base(
                 getattr(self.config, "model_update_type", "cut3r")
             )
-        return float(beta_safe)
+        return float(beta_base)
 
     def _entropy_head_reduce(self):
         return getattr(
@@ -830,7 +830,7 @@ class ARCroco3DStereo(CroCoNet):
         )
         return max(0.0, min(1.0, clamp_max))
 
-    def _token_heat_decay(self):
+    def _update_pressure_decay(self):
         if not self._uses_recal3r():
             raise RuntimeError("token heat decay requested outside recal3r mode")
         model_update_type = getattr(
@@ -843,7 +843,7 @@ class ARCroco3DStereo(CroCoNet):
             decay = getattr(
                 self.config,
                 "heat_decay",
-                default_token_heat_decay(),
+                default_update_pressure_decay(),
             )
         decay = float(decay)
         return max(0.0, min(1.0, decay))
@@ -891,9 +891,9 @@ class ARCroco3DStereo(CroCoNet):
     def get_u_calibration_last_state(self):
         return getattr(self, "_u_calibration_last_state", None)
 
-    def _stash_u_calibration_stats(self, u_m, h_m):
+    def _stash_u_calibration_stats(self, R, h_m):
         if hasattr(self, "_u_calibration_trace"):
-            self._u_calibration_pending_u = u_m.detach()
+            self._u_calibration_pending_u = R.detach()
             self._u_calibration_pending_h = h_m.detach()
 
     def _init_recal3r_reference_state(self, state_feat):
@@ -1011,15 +1011,15 @@ class ARCroco3DStereo(CroCoNet):
         self._u_calibration_pending_u = None
         self._u_calibration_pending_h = None
 
-    def _reset_token_heat_if_needed(self, reset_mask):
-        if not self._uses_token_heat_update():
+    def _reset_update_pressure_if_needed(self, reset_mask):
+        if not self._uses_update_pressure_update():
             return
         if isinstance(reset_mask, torch.Tensor):
             should_reset = bool(reset_mask.detach().any().cpu().item())
         else:
             should_reset = bool(reset_mask)
-        if should_reset and hasattr(self, "token_heat"):
-            del self.token_heat
+        if should_reset and hasattr(self, "update_pressure"):
+            del self.update_pressure
 
     def _compute_state_update_mask(self, update_mask, raw_cross_attn_state):
         state_attn_tensor = torch.stack(raw_cross_attn_state, dim=0)
@@ -1029,7 +1029,7 @@ class ARCroco3DStereo(CroCoNet):
 
     def _align_token_stat_with_beta(self, stat, beta_like):
         """
-        Align row-wise token statistics (e.g. u_m, rho) to beta tensor layout.
+        Align row-wise token statistics (e.g. R, rho) to beta tensor layout.
         Expected output shape matches beta_like, typically [B, N_state, 1].
         """
         aligned = stat
@@ -1183,7 +1183,7 @@ class ARCroco3DStereo(CroCoNet):
             return pi_0.squeeze(0), drift_m.squeeze(0)
         return pi_0, drift_m
 
-    def _compute_frame_surprise(self, dec):
+    def _compute_residual_score(self, dec):
         with torch.no_grad():
             f_img_input_proj = self.decoder_embed(dec[0])
             f_img_output = dec[-1][:, 1:]
@@ -1192,9 +1192,9 @@ class ARCroco3DStereo(CroCoNet):
             raw_recon_err = torch.norm(diff, p=2, dim=-1).mean()
             input_norm = torch.norm(f_img_input_proj, p=2, dim=-1).mean() + 1e-6
             relative_err = raw_recon_err / input_norm
-            frame_surprise = torch.sigmoid(relative_err - 0.2)
+            residual_score = torch.sigmoid(relative_err - 0.2)
 
-        return frame_surprise, relative_err
+        return residual_score, relative_err
 
     def _compute_recal3r_update_mask(
         self,
@@ -1204,20 +1204,20 @@ class ARCroco3DStereo(CroCoNet):
         prev_state_feat=None,
     ):
         _, beta_t, _ = self._compute_state_update_mask(update_mask, raw_cross_attn_state)
-        spatial_gate = beta_t
+        alignment_gate = beta_t
 
         with torch.no_grad():
             if (
-                not hasattr(self, "token_heat")
-                or self.token_heat.shape != spatial_gate.shape
+                not hasattr(self, "update_pressure")
+                or self.update_pressure.shape != alignment_gate.shape
             ):
-                self.token_heat = torch.zeros_like(spatial_gate)
-            decay = self._token_heat_decay()
-            self.token_heat = (
-                decay * self.token_heat + (1.0 - decay) * spatial_gate.detach()
+                self.update_pressure = torch.zeros_like(alignment_gate)
+            decay = self._update_pressure_decay()
+            self.update_pressure = (
+                decay * self.update_pressure + (1.0 - decay) * alignment_gate.detach()
             )
-            anchor_protection = torch.exp(-self.token_heat)
-            frame_surprise_scalar, _ = self._compute_frame_surprise(dec)
+            attenuation = torch.exp(-self.update_pressure)
+            residual_score_scalar, _ = self._compute_residual_score(dec)
 
             if prev_state_feat is None:
                 raise RuntimeError("recal3r requires prev_state_feat for drift prior")
@@ -1227,25 +1227,25 @@ class ARCroco3DStereo(CroCoNet):
             h_m = self._compute_empirical_quantile_norm(
                 self._compute_row_entropy_norm(attn_weights)
             )
-            beta_trust = spatial_gate * frame_surprise_scalar * anchor_protection
+            beta_trust = alignment_gate * residual_score_scalar * attenuation
             gamma_num = pi_0 * (1.0 - h_m)
             gamma_bad = (1.0 - pi_0) * h_m
             gamma_den = gamma_num + gamma_bad + 1e-8
             gamma_m = gamma_num / gamma_den
-            u_m = self._compute_recal3r_u(gamma_m)
+            R = self._compute_recal3r_u(gamma_m)
 
             if beta_trust.dim() > gamma_m.dim():
                 h_m = self._align_token_stat_with_beta(h_m, beta_trust)
                 gamma_m = self._align_token_stat_with_beta(gamma_m, beta_trust)
-                u_m = self._align_token_stat_with_beta(u_m, beta_trust)
+                R = self._align_token_stat_with_beta(R, beta_trust)
 
-            beta_safe = torch.full_like(beta_trust, self._beta_safe())
-            beta_final = (1.0 - u_m) * beta_trust + u_m * beta_safe
+            beta_base = torch.full_like(beta_trust, self._beta_base())
+            beta_final = (1.0 - R) * beta_trust + R * beta_base
             beta_final = self._smooth_beta_toward_frame_mean(beta_final)
             beta_t = beta_final.clamp(min=0.0, max=1.0)
 
         self._stash_u_calibration_stats(
-            u_m.squeeze(-1) if u_m.dim() > 2 else u_m,
+            R.squeeze(-1) if R.dim() > 2 else R,
             h_m.squeeze(-1) if h_m.dim() > 2 else h_m,
         )
         return update_mask * beta_t
@@ -1343,8 +1343,8 @@ class ARCroco3DStereo(CroCoNet):
         # [B, C, H, W] -> [B, H/16*W/16, 1024]
         shape, feat_ls, pos = self._encode_views(views) # [15, 3, 288, 512] -> feat [15, 576, 1024], pos [15, 576, 2]
         feat = feat_ls[-1]
-        if self._uses_token_heat_update() and hasattr(self, "token_heat"):
-            del self.token_heat
+        if self._uses_update_pressure_update() and hasattr(self, "update_pressure"):
+            del self.update_pressure
         state_feat, state_pos = self._init_state(feat[0], pos[0]) # init state feat [1, 768, 768], state_pos [1, 768, 2]
         self._init_recal3r_reference_state(state_feat)
         mem = self.pose_retriever.mem.expand(feat[0].shape[0], -1, -1) # [1, 256, 1536] init pose mem
@@ -1438,7 +1438,7 @@ class ARCroco3DStereo(CroCoNet):
                     1 - reset_mask
                 )
                 mem = init_mem * reset_mask + mem * (1 - reset_mask)
-                self._reset_token_heat_if_needed(reset_mask)
+                self._reset_update_pressure_if_needed(reset_mask)
             all_state_args.append(
                 (state_feat, state_pos, init_state_feat, mem, init_mem)
             )
@@ -1666,8 +1666,8 @@ class ARCroco3DStereo(CroCoNet):
         ress = []
         all_state_args = []
         reset_mask = False
-        if self._uses_token_heat_update() and hasattr(self, "token_heat"):
-            del self.token_heat
+        if self._uses_update_pressure_update() and hasattr(self, "update_pressure"):
+            del self.update_pressure
         for i, _view in enumerate(views):
             view = to_gpu(_view, device)
             device = view["img"].device
@@ -1818,7 +1818,7 @@ class ARCroco3DStereo(CroCoNet):
 
             reset_mask = view["reset"]
             if reset_mask is not None:
-                self._reset_token_heat_if_needed(reset_mask)
+                self._reset_update_pressure_if_needed(reset_mask)
                 self._reset_recal3r_reference_state_if_needed(
                     reset_mask, init_state_feat
                 )

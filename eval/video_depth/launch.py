@@ -69,7 +69,7 @@ def get_args_parser():
         help="model type for state update strategy",
     )
     parser.add_argument(
-        "--beta_safe",
+        "--beta_base",
         type=float,
         default=None,
         help="safe fallback beta value; default is 0.1 for recal3r and 0.0 otherwise",
@@ -125,9 +125,9 @@ def get_args_parser():
     )
     return parser
 
-def resolve_beta_safe_default(args):
-    if args.beta_safe is not None:
-        return float(args.beta_safe)
+def resolve_beta_base_default(args):
+    if args.beta_base is not None:
+        return float(args.beta_base)
     return 0.1 if (args.model_update_type or "").strip() == "recal3r" else 0.0
 
 
@@ -354,7 +354,7 @@ def eval_pose_estimation_dist(args, model, img_path, save_dir=None, mask_path=No
 if __name__ == "__main__":
     args = get_args_parser()
     args = args.parse_args()
-    args.beta_safe = resolve_beta_safe_default(args)
+    args.beta_base = resolve_beta_base_default(args)
     args.full_seq = False
     args.no_crop = True
 
@@ -512,12 +512,12 @@ if __name__ == "__main__":
         # set model type
         model.model_update_type = args.model_update_type
         model.config.model_update_type = args.model_update_type
-        model.config.beta_safe = args.beta_safe
+        model.config.beta_base = args.beta_base
         model.config.entropy_eps = 2e-14
         model.config.entropy_head_reduce = "mean"
         model.config.uncertainty_clamp_max = 1.0
         model.config.decay = 0.95 if args.model_update_type == "recal3r" else None
-        model.beta_safe = args.beta_safe
+        model.beta_base = args.beta_base
         model.entropy_head_reduce = "mean"
         model.uncertainty_clamp_max = 1.0
         model.entropy_eps = 2e-14
