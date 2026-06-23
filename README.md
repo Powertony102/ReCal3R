@@ -10,14 +10,13 @@
   Pengxu Chen,
   Wentao Fan,
   Weifeng Su,
-  Weisi Lin,
   <a href="https://wtchengcv.github.io/">Wentao Cheng</a>
 </p>
-<p align="center">
-  <a href="https://bnbu.edu.cn/" style="display: inline-block; margin: 0 24px; vertical-align: middle;"><img height="55" src="assets/logo_bnbu.svg"></a>
-  <a href="https://www.hkbu.edu.hk/en.html" style="display: inline-block; margin: 0 24px; vertical-align: middle;"><img height="50" src="assets/logo_hkbu.svg"></a>
-  <a href="https://www.jlu.edu.cn/" style="display: inline-block; margin: 0 24px; vertical-align: middle;"><img height="50" src="assets/logo_jlu.webp"></a>
-</p>
+<div align="center" style="display: inline-flex; align-items: center; justify-content: center; gap: 28px; flex-wrap: wrap;">
+  <a href="https://bnbu.edu.cn/" style="display: inline-flex; align-items: center;"><img height="55" src="assets/logo_bnbu.svg"></a>
+  <a href="https://www.hkbu.edu.hk/en.html" style="display: inline-flex; align-items: center;"><img height="50" src="assets/logo_hkbu.svg"></a>
+  <a href="https://www.jlu.edu.cn/" style="display: inline-flex; align-items: center;"><img height="50" src="assets/logo_jlu.webp"></a>
+</div>
 </div>
 
 ## Getting Started
