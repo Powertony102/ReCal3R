@@ -17,7 +17,18 @@
   <a href="https://www.hkbu.edu.hk/en.html" style="display: inline-flex; align-items: center;"><img height="50" src="assets/logo_hkbu.svg"></a>
   <a href="https://www.jlu.edu.cn/" style="display: inline-flex; align-items: center;"><img height="50" src="assets/logo_jlu.webp"></a>
 </div>
+<p align="center">
+  <img width="100%" src="assets/scannet1000_ate_fps_mem_bars.webp" alt="ReCal3R evaluation on ScanNet1000">
+</p>
 </div>
+
+## 🔭 Overview
+
+<p align="center">
+  <img width="100%" src="assets/recal3r-teaser.webp" alt="ReCal3R overview teaser">
+</p>
+
+ReCal3R estimates state token reliability and a candidate learning rate from the recurrent forward pass, and uses reliability calibration to obtain the final state learning rate. This prevents unreliable state tokens from receiving aggressive updates and leads to cleaner reconstructions than CUT3R over long image streams.
 
 ## Getting Started
 
