@@ -14,13 +14,9 @@
   <a href="https://wtchengcv.github.io/">Wentao Cheng</a>
 </p>
 <p align="center">
-  Wentao Cheng is the Corresponding Author
-</p>
-<p align="center">
   <a href="https://bnbu.edu.cn/" style="margin: 0 40px 0 25px;"><img height="55" src="assets/logo_bnbu.svg"></a>
   <a href="https://www.hkbu.edu.hk/en.html" style="margin: 0 25px;"><img height="50" src="assets/logo_hkbu.svg"></a>
   <a href="https://www.jlu.edu.cn/" style="margin: 0 25px;"><img height="50" src="assets/logo_jlu.webp"></a>
-  <a href="https://www.ntu.edu.sg/" style="margin: 0 25px;"><img height="50" src="assets/ntu_logo.webp"></a>
 </p>
 </div>
 
