@@ -1,6 +1,7 @@
 <div align="center">
 <h2> ReCal3R: Reliability-Calibrated Learning Rates for Streaming 3D Reconstruction </h2>
 <p align="center">
+  <a href="https://powertony102.github.io/recal3r.github.io/"><img src="https://img.shields.io/badge/Project%20Page-ReCal3R-blue?style=for-the-badge" alt="ReCal3R Project Page"></a>
 </p>
 <p align="center">
   <a href="https://xinzelicv.github.io/">Xinze Li</a>,
