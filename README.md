@@ -1,8 +1,6 @@
 <div align="center">
 <h2> ReCal3R: Reliability-Calibrated Learning Rates for Streaming 3D Reconstruction </h2>
 <p align="center">
-  <a href="https://arxiv.org/abs/2603.17625"><img src="https://img.shields.io/badge/arXiv-S_VGGT-red?logo=arxiv" alt="Paper PDF (Coming Soon)"></a>
-  <a href="https://github.com/Powertony102/S-VGGT"><img src="https://img.shields.io/badge/Project_Page-SVGGT-yellow" alt="Project Page"></a>
 </p>
 <p align="center">
   <a href="https://xinzelicv.github.io/">Xinze Li</a>,
