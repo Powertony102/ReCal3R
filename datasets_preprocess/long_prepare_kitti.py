@@ -1,8 +1,9 @@
 import shutil
+import os
 from pathlib import Path
 
 
-DATASET_ROOT = Path("/root/autodl-tmp/dataset/kitti")
+DATASET_ROOT = Path(os.environ.get("KITTI_ROOT", "data/kitti"))
 OUTPUT_BASE = Path("./data/long_kitti_s1/depth_selection/val_selection_cropped")
 TARGET_FRAMES_LIST = [100, 300, 500, 700]
 CAMERA_NAME = "image_02"

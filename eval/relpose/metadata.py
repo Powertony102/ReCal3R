@@ -50,7 +50,7 @@ dataset_metadata = {
     "scannet": {
         "img_path": os.environ.get(
             "EVAL_SCANNET_ROOT",
-            "/home/jovyan/shared/xinzeli/scannetv2/process_scannet",
+            "data/scannetv2/process_scannet",
         ),
         "mask_path": None,
         "dir_path_func": lambda img_path, seq: scannet_color_dir(img_path, seq),

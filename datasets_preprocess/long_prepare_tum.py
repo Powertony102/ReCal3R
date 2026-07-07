@@ -3,6 +3,8 @@ import os
 import shutil
 import numpy as np
 
+TUM_ROOT = os.environ.get("EVAL_TUM_ROOT", "data/tum")
+
 def read_file_list(filename):
     """
     Reads a trajectory from a text file. 
@@ -63,7 +65,7 @@ output_base_dir = "./data/long_tum_s1/"
 SAMPLE_INTERVAL = 1 # sampling interval, take 1 frame every N frames original 3
 os.makedirs(output_base_dir, exist_ok=True)
 
-dirs = glob.glob("/home/xingyu/monst3r/data/tum/*/")
+dirs = glob.glob(os.path.join(TUM_ROOT, "*/"))
 dirs = sorted(dirs)
 # extract frames
 # total_frames_list = []

@@ -9,8 +9,8 @@ ckpt_name='cut3r_512_dpt_4_64'
 model_weights="${workdir}/src/${ckpt_name}.pth"
 kf=2
 max_eval_points=1000000
-seven_scenes_root="${EVAL_7SCENES_ROOT:-/root/autodl-tmp/dataset/7-scenes}"
-nrgbd_root="${EVAL_NRGBD_ROOT:-/root/autodl-tmp/dataset/nrgbd}"
+seven_scenes_root="${EVAL_7SCENES_ROOT:-data/7-scenes}"
+nrgbd_root="${EVAL_NRGBD_ROOT:-data/nrgbd}"
 
 for model_name in "${model_names[@]}"; do
 for data in "${eval_datasets[@]}"; do

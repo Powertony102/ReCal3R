@@ -7,7 +7,7 @@ model_names=('recal3r') # recal3r ttt3r cut3r
 
 ckpt_name='cut3r_512_dpt_4_64'
 model_weights="${workdir}/src/${ckpt_name}.pth"
-scannet_root="${EVAL_SCANNET_ROOT:-/root/autodl-tmp/dataset/process_scannet}"
+scannet_root="${EVAL_SCANNET_ROOT:-data/scannetv2/process_scannet}"
 max_frames="${EVAL_SCANNET_MAX_FRAMES:-1000}"
 max_frames_list="${EVAL_SCANNET_MAX_FRAMES_LIST:-$max_frames}"
 num_processes="${NUM_PROCESSES:-2}"

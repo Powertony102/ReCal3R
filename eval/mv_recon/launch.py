@@ -55,7 +55,7 @@ def get_args_parser():
         "--seven_scenes_root",
         type=str,
         default=os.environ.get(
-            "EVAL_7SCENES_ROOT", "/root/autodl-tmp/dataset/7-scenes"
+            "EVAL_7SCENES_ROOT", "data/7-scenes"
         ),
         help="7Scenes dataset root",
     )
@@ -63,7 +63,7 @@ def get_args_parser():
         "--nrgbd_root",
         type=str,
         default=os.environ.get(
-            "EVAL_NRGBD_ROOT", "/root/autodl-tmp/dataset/nrgbd"
+            "EVAL_NRGBD_ROOT", "data/nrgbd"
         ),
         help="NRGBD dataset root",
     )
@@ -72,7 +72,7 @@ def get_args_parser():
         type=str,
         default=os.environ.get(
             "EVAL_SCANNET_ROOT",
-            "/home/jovyan/shared/xinzeli/scannetv2/process_scannet",
+            "data/scannetv2/process_scannet",
         ),
         help="processed ScanNet root with scene/color and scene/pose folders",
     )
@@ -82,7 +82,7 @@ def get_args_parser():
         dest="scannet_gt_ply_dir",
         type=str,
         default=os.environ.get(
-            "EVAL_SCANNET_GT_PLY_DIR", "/home/jovyan/shared/xinzeli/scannetv2/scannet"
+            "EVAL_SCANNET_GT_PLY_DIR", "data/scannetv2/scannet"
         ),
         help="ScanNet ground-truth mesh root for reconstruction Chamfer evaluation",
     )

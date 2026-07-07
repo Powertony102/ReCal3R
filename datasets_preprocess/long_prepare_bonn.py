@@ -3,11 +3,13 @@ import os
 import shutil
 import numpy as np
 
+BONN_ROOT = os.environ.get("EVAL_BONN_ROOT", "data/bonn/rgbd_bonn_dataset")
+
 START_FRAME = 30  # inital frame
 for TARGET_FRAMES in [50,100,150,200,250,300,350,400,450,500]: 
     END_FRAME = START_FRAME + TARGET_FRAMES   # end frame
 
-    dirs = glob.glob("/home/xingyu/monst3r/data/bonn/rgbd_bonn_dataset/*/")
+    dirs = glob.glob(os.path.join(BONN_ROOT, "*/"))
     dirs = sorted(dirs)
 
     # create new base directory

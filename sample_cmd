@@ -4,8 +4,8 @@ python eval/mv_recon/launch.py \
   --model_name ttt3r \
   --model_update_type ttt3r \
   --eval_dataset all \
-  --seven_scenes_root /root/autodl-tmp/dataset/7-scenes \
-  --nrgbd_root /root/autodl-tmp/dataset/7-scenes/nrgbd \
+  --seven_scenes_root data/7-scenes \
+  --nrgbd_root data/nrgbd \
   --kf 3
 
 python eval/mv_recon/launch.py \
@@ -14,11 +14,11 @@ python eval/mv_recon/launch.py \
   --model_name recal3r \
   --model_update_type recal3r \
   --eval_dataset all \
-  --seven_scenes_root /root/autodl-tmp/dataset/7-scenes \
-  --nrgbd_root /root/autodl-tmp/dataset/7-scenes/nrgbd \
+  --seven_scenes_root data/7-scenes \
+  --nrgbd_root data/nrgbd \
   --kf 3
 
-EVAL_SCANNET_ROOT=/root/autodl-tmp/dataset/process_scannet \
+EVAL_SCANNET_ROOT=data/scannetv2/process_scannet \
 bash eval/mv_recon/run_scannet.sh
 
 
@@ -26,7 +26,7 @@ python eval/relpose/launch.py \
   --weights src/cut3r_512_dpt_4_64.pth \
   --output_dir eval_results/relpose/bonn/recal3r \
   --eval_dataset bonn \
-  --dataset_path /root/autodl-tmp/dataset/rgbd_bonn_dataset \
+  --dataset_path data/bonn/rgbd_bonn_dataset \
   --pose_eval_stride 1 \
   --max_frames 1000 \
   --size 512 \

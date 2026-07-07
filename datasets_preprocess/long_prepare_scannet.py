@@ -3,17 +3,19 @@ import os
 import shutil
 import numpy as np
 
+SCANNET_TEST_ROOT = os.environ.get("SCANNET_TEST_ROOT", "data/scannet/scans_test")
+
 # configurable parameters
 for TARGET_FRAMES in [50,90,100,150,200,300,400,500,600,700,800,900,1000]:
 
     SAMPLE_INTERVAL = 3  # sampling interval, take 1 frame every N frames original 3
 
-    seq_list = sorted(os.listdir("/home/share/Dataset/3D_scene/ScanNet/scans_test/"))
+    seq_list = sorted(os.listdir(SCANNET_TEST_ROOT))
 
     for seq in seq_list:
-        img_pathes = sorted(glob.glob(f"/home/share/Dataset/3D_scene/ScanNet/scans_test/{seq}/color/*.jpg"), key=lambda x: int(os.path.basename(x).split('.')[0]))
-        depth_pathes = sorted(glob.glob(f"/home/share/Dataset/3D_scene/ScanNet/scans_test/{seq}/depth/*.png"), key=lambda x: int(os.path.basename(x).split('.')[0]))
-        pose_pathes = sorted(glob.glob(f"/home/share/Dataset/3D_scene/ScanNet/scans_test/{seq}/pose/*.txt"), key=lambda x: int(os.path.basename(x).split('.')[0]))
+        img_pathes = sorted(glob.glob(f"{SCANNET_TEST_ROOT}/{seq}/color/*.jpg"), key=lambda x: int(os.path.basename(x).split('.')[0]))
+        depth_pathes = sorted(glob.glob(f"{SCANNET_TEST_ROOT}/{seq}/depth/*.png"), key=lambda x: int(os.path.basename(x).split('.')[0]))
+        pose_pathes = sorted(glob.glob(f"{SCANNET_TEST_ROOT}/{seq}/pose/*.txt"), key=lambda x: int(os.path.basename(x).split('.')[0]))
         
         # calculate the required original frame count
         required_frames = TARGET_FRAMES * SAMPLE_INTERVAL

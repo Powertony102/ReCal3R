@@ -22,10 +22,6 @@ export NUMEXPR_NUM_THREADS="${NUMEXPR_NUM_THREADS:-64}"
 
 if [[ -n "$dataset_path" && ! -d "$dataset_path" ]]; then
     echo "TUM dataset root does not exist: $dataset_path" >&2
-    alt_path="${dataset_path/autodl_tmp/autodl-tmp}"
-    if [[ "$alt_path" != "$dataset_path" && -d "$alt_path" ]]; then
-        echo "Did you mean: $alt_path ?" >&2
-    fi
     exit 1
 fi
 

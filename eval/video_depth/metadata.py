@@ -2,6 +2,8 @@ import os
 import glob
 from tqdm import tqdm
 
+SINTEL_ROOT = os.environ.get("EVAL_SINTEL_ROOT", "data/MPI_Sintel/training")
+
 # Define the merged dataset metadata dictionary
 dataset_metadata = {
     "davis": {
@@ -79,8 +81,8 @@ dataset_metadata = {
         "process_func": None,
     },
     "sintel": {
-        "img_path": "/root/autodl-tmp/dataset/MPI_Sintel/training/final",
-        "anno_path": "/root/autodl-tmp/dataset/MPI_Sintel/training/camdata_left",
+        "img_path": os.path.join(SINTEL_ROOT, "final"),
+        "anno_path": os.path.join(SINTEL_ROOT, "camdata_left"),
         "mask_path": None,
         "dir_path_func": lambda img_path, seq: os.path.join(img_path, seq),
         "gt_traj_func": lambda img_path, anno_path, seq: os.path.join(anno_path, seq),
