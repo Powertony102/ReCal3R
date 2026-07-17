@@ -8,7 +8,6 @@
   <a href="https://xinzelicv.github.io/">Xinze Li</a>,
   Yiyuan Wang,
   Pengxu Chen,
-  Wentao Fan,
   Weifeng Su,
   Weisi Lin,
   <a href="https://wtchengcv.github.io/">Wentao Cheng</a>
